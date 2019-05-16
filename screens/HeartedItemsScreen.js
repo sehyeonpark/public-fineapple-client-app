@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-class DashboardScreen extends Component {
+class HeartedItemsScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>DashboardScreen Screen!!!</Text>
+        <Text>HeartedItems Screen!!!</Text>
       </View>
     );
   }
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DashboardScreen;
+export default HeartedItemsScreen;

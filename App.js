@@ -3,12 +3,10 @@ import { StyleSheet, Text, View } from "react-native";
 // import { Navigation } from "react-native-navigation";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 // import { createSwitchNavigator, createAppContainer } from "react-navigation";
-import { Button } from "react-native";
 
 import LoginScreen from "./screens/LoginScreen";
 import MainScreen from "./screens/MainScreen";
-import LoadingScreen from "./screens/LoadingScreen";
-import DashboardScreen from "./screens/DashboardScreen";
+// import LoadingScreen from "./screens/LoadingScreen";
 
 export default class App extends React.Component {
   render() {

@@ -76,10 +76,14 @@ class LoginScreen extends Component {
           title="Facebook Login"
           onPress={this.FacebookSignIn.bind(this)}
         />
-        <Image
+        <Button
+          title="로그인 하지 않고 둘러보기"
+          onPress={() => this.props.navigation.navigate("Main")}
+        />
+        {/* <Image
           source={{ uri: this.state.image.data.url }}
           style={{ width: 100, height: 100, borderRadius: 50 }}
-        />
+        /> */}
       </View>
     );
   }
