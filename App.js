@@ -1,17 +1,20 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Login from "./src/Login";
-import HeartedItems from "./src/HeartedItems";
-import Main from "./src/Main";
-import SearchResult from "./src/SearchResult";
-import StoreInfo from "./src/StoreInfo";
+// import { Navigation } from "react-native-navigation";
+import { createStackNavigator, createAppContainer } from "react-navigation";
+// import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import { Button } from "react-native";
 
-class App extends React.Component {
+import LoginScreen from "./screens/LoginScreen";
+import MainScreen from "./screens/MainScreen";
+import LoadingScreen from "./screens/LoadingScreen";
+import DashboardScreen from "./screens/DashboardScreen";
+
+export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>React-Native!!!</Text>
-      </View>
+      <AppStackNavigator />
+      // <AppNavigator />
     );
   }
 }
@@ -25,4 +28,21 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+const RootStack = createStackNavigator({
+  Login: {
+    screen: LoginScreen
+  },
+  Main: {
+    screen: MainScreen
+  }
+});
+
+const AppStackNavigator = createAppContainer(RootStack);
+
+// const AppSwitchNavigator = createSwitchNavigator({
+//   LoadingScreen: LoadingScreen,
+//   LoginScreen: LoginScreen,
+//   DashboardScreen: DashboardScreen
+// });
+
+// const AppNavigator = createAppContainer(AppSwitchNavigator);
