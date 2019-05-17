@@ -8,15 +8,16 @@ class MainScreen extends Component {
     super(props);
 
     this.state = {
-      country: "KR",
-      store: "R692",
-      mainCategory: "mac",
-      subCategory: "macbook",
+      country: "",
+      store: "",
+      mainCategory: "",
+      subCategory: "",
       storeList: [],
       mainCategoryList: [],
       subCategoryList: []
     };
   }
+
   findStoreList() {
     fetch("http://13.125.34.37:3001/stores/list")
       .then(res => res.json())
@@ -48,13 +49,14 @@ class MainScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>국가를 선택해주세요</Text>
+        <Text style={styles.title}>국가 :</Text>
         <Picker
           style={styles.twoPickers}
           itemStyle={styles.twoPickerItems}
           selectedValue={this.state.country}
           onValueChange={itemValue => this.setState({ country: itemValue })}
         >
+          <Picker.Item label="국가를 선택해주세요" value="" />
           <Picker.Item label="대한민국" value="KR" />
           <Picker.Item label="일본" value="JP" />
           <Picker.Item label="홍콩" value="HK" />
@@ -66,6 +68,7 @@ class MainScreen extends Component {
           selectedValue={this.state.store}
           onValueChange={itemValue => this.setState({ store: itemValue })}
         >
+          <Picker.Item label="스토어를 선택해주세요" value="" />
           {this.state.storeList.map(store => {
             let arr = [];
             if (store.country_code === this.state.country) {
@@ -89,6 +92,7 @@ class MainScreen extends Component {
             this.setState({ mainCategory: itemValue })
           }
         >
+          <Picker.Item label="대분류를 선택해주세요" value="" />
           {this.state.mainCategoryList.map(item => (
             <Picker.Item label={item} value={item.toLowerCase()} key={item} />
           ))}
@@ -100,6 +104,7 @@ class MainScreen extends Component {
           selectedValue={this.state.subCategory}
           onValueChange={itemValue => this.setState({ subCategory: itemValue })}
         >
+          <Picker.Item label="소분류를 선택해주세요" value="" />
           {this.state.subCategoryList.map(item => {
             let arr = [];
             for (let key in item) {
@@ -113,15 +118,14 @@ class MainScreen extends Component {
           })}
         </Picker>
         <Button
-          hasTVPreferredFocus={true}
           title="검색하기"
-          onPress={() => this.props.navigation.navigate("Products")}
-          // onPress={() => {
-          //   // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          //   // console.log(this.state.country);
-          //   // console.log(this.state.store);
-          //   // console.log(this.state.subCategory);
-          // }}
+          onPress={() =>
+            this.props.navigation.navigate("Products", {
+              country: this.state.country,
+              store: this.state.store,
+              category: this.state.subCategory
+            })
+          }
         />
       </View>
     );
