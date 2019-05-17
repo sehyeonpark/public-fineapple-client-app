@@ -4,7 +4,8 @@ import config from "../config";
 const Expo = require("expo");
 import { Facebook } from "expo";
 const axios = require("axios");
-const IOS_CLIENT_KEY = config.IOS_CLIENT_KEY;
+const GOOGLE_CLIENT_KEY = config.GOOGLE_CLIENT_KEY;
+const FACEBOOK_CLIENT_KEY = config.FACEBOOK_CLIENT_KEY;
 
 class LoginScreen extends Component {
   state = {
@@ -18,7 +19,7 @@ class LoginScreen extends Component {
   async GoogleSignIn() {
     try {
       const result = await Expo.Google.logInAsync({
-        iosClientId: IOS_CLIENT_KEY,
+        iosClientId: GOOGLE_CLIENT_KEY,
         scopes: ["profile", "email"]
       });
       if (result.type === "success") {
@@ -41,7 +42,7 @@ class LoginScreen extends Component {
 
   async FacebookSignIn() {
     const { type, token } = await Facebook.logInWithReadPermissionsAsync(
-      "969319146756204",
+      FACEBOOK_CLIENT_KEY,
       {
         permissions: ["public_profile"]
       }
@@ -92,6 +93,7 @@ class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"

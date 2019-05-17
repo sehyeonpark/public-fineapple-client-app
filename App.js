@@ -6,7 +6,7 @@ import { createStackNavigator, createAppContainer } from "react-navigation";
 
 import LoginScreen from "./screens/LoginScreen";
 import MainScreen from "./screens/MainScreen";
-// import LoadingScreen from "./screens/LoadingScreen";
+import ProductsResultScreen from "./screens/ProductsResultScreen";
 
 export default class App extends React.Component {
   render() {
@@ -32,6 +32,9 @@ const RootStack = createStackNavigator({
   },
   Main: {
     screen: MainScreen
+  },
+  Products: {
+    screen: ProductsResultScreen
   }
 });
 
