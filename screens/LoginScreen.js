@@ -7,6 +7,8 @@ const axios = require("axios");
 const GOOGLE_CLIENT_KEY = config.GOOGLE_CLIENT_KEY;
 const FACEBOOK_CLIENT_KEY = config.FACEBOOK_CLIENT_KEY;
 
+import { AsyncStorage } from "react-native";
+
 class LoginScreen extends Component {
   state = {
     image: {
@@ -16,6 +18,17 @@ class LoginScreen extends Component {
       }
     }
   };
+  _storeData = async (token, image, name) => {
+    try {
+      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("image", image);
+      await AsyncStorage.setItem("name", name);
+    } catch (error) {
+      console.log(error);
+      // Error saving data
+    }
+  };
+
   async GoogleSignIn() {
     try {
       const result = await Expo.Google.logInAsync({
@@ -23,15 +36,41 @@ class LoginScreen extends Component {
         scopes: ["profile", "email"]
       });
       if (result.type === "success") {
-        console.log(result.user);
-        console.log(result.accessToken);
+        console.log("!!!!!!!!!!!!!!!!!!!", result.user);
+        // console.log(result.accessToken);
         let returnData = {
           user_id: result.user.id,
-          provider: "google",
-          access_token: result.accessToken
+          provider: "google"
+          // access_token: result.accessToken
         };
-        // return result.accessToken;
-        axios.post("serverUrl", returnData).then(res => console.log(res));
+        fetch("http://13.125.34.37:3001/users/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(returnData)
+        })
+          .then(result => result.json())
+          .then(json => {
+            if (json.isMember) {
+              console.log("login!!!!!!!!!!!");
+              // console.log(result.user.photoUrl);
+              this._storeData(
+                result.accessToken,
+                result.user.photoUrl,
+                result.user.name
+              );
+              this.props.navigation.navigate("Home", {
+                userData: returnData,
+                token: result.accessToken
+              });
+            } else {
+              this.props.navigation.navigate("Signup", {
+                userData: returnData,
+                token: result.accessToken
+              });
+            }
+          });
       } else {
         return { canclled: true };
       }
@@ -55,11 +94,38 @@ class LoginScreen extends Component {
         `https://graph.facebook.com/me?access_token=${token}&fields=id,name,picture.type(large)`
       );
       let user = await response.json();
+      let returnData = {
+        user_id: user.id,
+        provider: "facebook"
+      };
+      let userImage = user.picture.data.url;
+      let userName = user.name;
       console.log(user);
-      this.setState({
-        image: user.picture
-      });
-      alert("Logged in! " + "Hi " + user.name);
+      // alert("Logged in! " + "Hi " + user.name);
+      fetch("http://13.125.34.37:3001/users/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(returnData)
+      })
+        .then(result => result.json())
+        .then(json => {
+          if (json.isMember) {
+            console.log("login!!!!!!!!!!!");
+            this._storeData(token, userImage, userName);
+            this.props.navigation.navigate("Home", {
+              userData: returnData,
+              token: token
+            });
+          } else {
+            console.log("###################");
+            this.props.navigation.navigate("Signup", {
+              userData: returnData,
+              token: token
+            });
+          }
+        });
     }
   }
 
@@ -79,7 +145,7 @@ class LoginScreen extends Component {
         />
         <Button
           title="로그인 하지 않고 둘러보기"
-          onPress={() => this.props.navigation.navigate("Main")}
+          onPress={() => this.props.navigation.navigate("Home")}
         />
         {/* <Image
           source={{ uri: this.state.image.data.url }}
