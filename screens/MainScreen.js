@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Picker, Button } from "react-native";
 import category from "../data/category";
+import { AsyncStorage } from "react-native";
 const categoryList = category.categoryList;
 
 class MainScreen extends Component {
@@ -14,15 +15,35 @@ class MainScreen extends Component {
       subCategory: "",
       storeList: [],
       mainCategoryList: [],
-      subCategoryList: []
+      subCategoryList: [],
+      userId: 0
     };
   }
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+      const user = await AsyncStorage.getItem("userId");
+      if (value !== null) {
+        // We have data!!
+        this.setState({
+          userId: user
+        });
+      } else {
+        console.log("Not Login");
+      }
+    } catch (error) {
+      console.log(error);
+      // Error retrieving data
+    }
+  };
 
   findStoreList() {
     fetch("http://13.125.34.37:3001/stores/list")
       .then(res => res.json())
       .then(json => {
         console.log("fetch!!!!!!!!!!!!!!!!!");
+        console.log(json);
         this.setState({
           storeList: json
         });
@@ -45,6 +66,7 @@ class MainScreen extends Component {
   componentDidMount() {
     this.findStoreList();
     this.categoryListInit();
+    this._retrieveData();
   }
   render() {
     return (
@@ -66,7 +88,9 @@ class MainScreen extends Component {
           style={styles.twoPickers}
           itemStyle={styles.twoPickerItems}
           selectedValue={this.state.store}
-          onValueChange={itemValue => this.setState({ store: itemValue })}
+          onValueChange={itemValue => {
+            this.setState({ store: itemValue });
+          }}
         >
           <Picker.Item label="스토어를 선택해주세요" value="" />
           {this.state.storeList.map(store => {
@@ -119,13 +143,15 @@ class MainScreen extends Component {
         </Picker>
         <Button
           title="검색하기"
-          onPress={() =>
+          onPress={() => {
+            console.log(this.state.userId);
             this.props.navigation.navigate("Products", {
               country: this.state.country,
               store: this.state.store,
-              category: this.state.subCategory
-            })
-          }
+              category: this.state.subCategory,
+              userId: this.state.userId
+            });
+          }}
         />
       </View>
     );

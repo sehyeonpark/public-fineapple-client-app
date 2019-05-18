@@ -11,6 +11,7 @@ import ProductsResultScreen from "../screens/ProductsResultScreen";
 import HeartedItemsScreen from "../screens/HeartedItemsScreen";
 import UserScreen from "../screens/UserScreen";
 import UserSignUpScreen from "../screens/UserSignUpScreen";
+import StoreScreen from "../screens/StoreScreen";
 
 const RootStack = createStackNavigator({
   //   Login: {
@@ -21,6 +22,9 @@ const RootStack = createStackNavigator({
   },
   Products: {
     screen: ProductsResultScreen
+  },
+  Store: {
+    screen: StoreScreen
   }
 });
 

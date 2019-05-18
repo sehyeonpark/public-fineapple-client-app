@@ -7,12 +7,12 @@ import {
   ScrollView
 } from "react-native";
 
-class LoadingScreen extends Component {
+class StoreScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <Text>LoadingScreen Screen!!!</Text> */}
-        <ActivityIndicator size="large" />
+        <Text>StoreScreen Screen!!!</Text>
+        {/* <ActivityIndicator size="large" /> */}
       </View>
     );
   }
@@ -27,4 +27,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LoadingScreen;
+export default StoreScreen;

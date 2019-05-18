@@ -3,14 +3,18 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { AsyncStorage } from "react-native";
 
 class UserSignUpScreen extends Component {
-  _storeData = async token => {
+  _storeData = async (token, image, name, userId) => {
     try {
       await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("image", image);
+      await AsyncStorage.setItem("name", name);
+      await AsyncStorage.setItem("userId", userId);
     } catch (error) {
       console.log(error);
       // Error saving data
     }
   };
+
   render() {
     const { params } = this.props.navigation.state;
     // console.log(params);
@@ -29,7 +33,14 @@ class UserSignUpScreen extends Component {
                 },
                 body: JSON.stringify(params.userData)
               })
-                .then(this._storeData(params.token))
+                .then(
+                  this._storeData(
+                    params.token,
+                    params.image,
+                    params.name,
+                    params.userId
+                  )
+                )
                 .then(this.props.navigation.navigate("Home"));
             }}
           />
