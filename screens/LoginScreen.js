@@ -10,19 +10,12 @@ const FACEBOOK_CLIENT_KEY = config.FACEBOOK_CLIENT_KEY;
 import { AsyncStorage } from "react-native";
 
 class LoginScreen extends Component {
-  state = {
-    image: {
-      data: {
-        url:
-          "https://lh6.googleusercontent.com/-VN2J0VSlLL8/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfEYa3tXM1RoFOWCyOPizSByMw5vA/mo/photo.jpg"
-      }
-    }
-  };
-  _storeData = async (token, image, name) => {
+  _storeData = async (token, image, name, userId) => {
     try {
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("image", image);
       await AsyncStorage.setItem("name", name);
+      await AsyncStorage.setItem("userId", userId);
     } catch (error) {
       console.log(error);
       // Error saving data
@@ -58,16 +51,21 @@ class LoginScreen extends Component {
               this._storeData(
                 result.accessToken,
                 result.user.photoUrl,
-                result.user.name
+                result.user.name,
+                result.user.id
               );
               this.props.navigation.navigate("Home", {
                 userData: returnData,
                 token: result.accessToken
               });
             } else {
+              console.log("%%%%%%%%%%%%%%%%%", result.user);
               this.props.navigation.navigate("Signup", {
                 userData: returnData,
-                token: result.accessToken
+                token: result.accessToken,
+                image: result.user.photoUrl,
+                name: result.user.name,
+                userId: result.user.id
               });
             }
           });
@@ -100,6 +98,7 @@ class LoginScreen extends Component {
       };
       let userImage = user.picture.data.url;
       let userName = user.name;
+      let userId = user.id;
       console.log(user);
       // alert("Logged in! " + "Hi " + user.name);
       fetch("http://13.125.34.37:3001/users/auth", {
@@ -113,7 +112,7 @@ class LoginScreen extends Component {
         .then(json => {
           if (json.isMember) {
             console.log("login!!!!!!!!!!!");
-            this._storeData(token, userImage, userName);
+            this._storeData(token, userImage, userName, userId);
             this.props.navigation.navigate("Home", {
               userData: returnData,
               token: token
@@ -122,7 +121,10 @@ class LoginScreen extends Component {
             console.log("###################");
             this.props.navigation.navigate("Signup", {
               userData: returnData,
-              token: token
+              token: token,
+              image: userImage,
+              name: userName,
+              userId: userId
             });
           }
         });
@@ -145,7 +147,10 @@ class LoginScreen extends Component {
         />
         <Button
           title="로그인 하지 않고 둘러보기"
-          onPress={() => this.props.navigation.navigate("Home")}
+          onPress={() => {
+            this.props.navigation.navigate("Home");
+            this._storeData("", "", "", "0");
+          }}
         />
         {/* <Image
           source={{ uri: this.state.image.data.url }}

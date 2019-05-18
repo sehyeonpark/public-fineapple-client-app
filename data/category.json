@@ -25,6 +25,9 @@
       "Apple Watch Nike+": "applewatchnike+",
       "Apple Watch Hermes": "applewatchhermes",
       "Apple Watch Series 3": "applewatchseries3"
+    },
+    "ETC": {
+      "ETC": "etc"
     }
   }
 }

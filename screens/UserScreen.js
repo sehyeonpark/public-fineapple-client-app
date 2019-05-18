@@ -63,6 +63,7 @@ class UserScreen extends Component {
               AsyncStorage.removeItem("token");
               AsyncStorage.removeItem("image");
               AsyncStorage.removeItem("name");
+              AsyncStorage.removeItem("userId");
               this.props.navigation.navigate("Login");
             }}
           />
