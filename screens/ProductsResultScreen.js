@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AsyncStorage } from "react-native";
@@ -42,20 +43,20 @@ class ProductsResultScreen extends Component {
 
   findProducts = () => {
     const { params } = this.props.navigation.state;
+    console.log("params :::::::::::::", params);
     fetch(
-      `http://13.125.34.37:3001/products/list?countryCode=${
-        params.country
-      }&storeCode=${params.store}&category=${params.category}&userId=${
-        params.userId
-      }`
+      `http://13.125.34.37:3001/products/list?countryCode=${params.country.toLowerCase()}&storeCode=${
+        params.store
+      }&category=${params.category}&userID=${params.userId}`
     )
       .then(result => result.json())
-      .then(json =>
+      .then(json => {
+        console.log(json);
         this.setState({
           products: json
-        })
-      )
-      .then(() => console.log(this.state.products));
+        });
+      });
+    // .then(() => console.log(this.state.products));
   };
 
   componentDidMount() {
@@ -72,6 +73,7 @@ class ProductsResultScreen extends Component {
         <ScrollView>
           {this.state.products.productlist.map(item => {
             const { params } = this.props.navigation.state;
+            // console.log("params ::::::::::::", params);
             let userHeartedItem = {
               userID: params.userId,
               productID: item.productID,
@@ -108,12 +110,23 @@ class ProductsResultScreen extends Component {
                           : this.setState({
                               ["color" + item.productID]: undefined
                             }) //여기 수정해야된다!!!!!!!!!!!!!!!!!!!!!!
-                        : //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          alert("로그인 해주세요!!!!!");
+                        : Alert.alert(
+                            "찜 목록 추가",
+                            "로그인이 필요한 서비스입니다. 로그인 하시겠습니까?",
+                            [
+                              {
+                                text: "Yes",
+                                onPress: () =>
+                                  this.props.navigation.navigate("Login")
+                              },
+                              {
+                                text: "Cancel",
+                                onPress: () => console.log("Cancle"),
+                                style: "cancel"
+                              }
+                            ],
+                            { cancelable: false }
+                          );
                     }}
                   />
                 </View>
@@ -135,7 +148,13 @@ class ProductsResultScreen extends Component {
                 <Text style={styles.text}>{item.storeName}</Text>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => this.props.navigation.navigate("Store")}
+                  onPress={() => {
+                    // console.log("0000000000000000000", params);
+                    this.props.navigation.navigate("Store", {
+                      country: params.country,
+                      store: params.store
+                    });
+                  }}
                 >
                   <Text style={styles.pickupText}> 매장 정보 보기 </Text>
                 </TouchableOpacity>
