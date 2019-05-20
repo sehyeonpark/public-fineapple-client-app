@@ -16,18 +16,24 @@ class MainScreen extends Component {
       storeList: [],
       mainCategoryList: [],
       subCategoryList: [],
-      userId: 0
+      userId: 0,
+      userDB_id: 0
     };
   }
 
   _retrieveData = async () => {
     try {
+      const userDB = await AsyncStorage.getItem("userDB_id");
       const value = await AsyncStorage.getItem("token");
       const user = await AsyncStorage.getItem("userId");
       if (value !== null) {
         // We have data!!
+        console.log("token :::::::::::::", value);
+        console.log(user);
+        console.log("userDB ::::::::::::::::", userDB);
         this.setState({
-          userId: user
+          userId: user,
+          userDB_id: userDB
         });
       } else {
         console.log("Not Login");
@@ -39,6 +45,7 @@ class MainScreen extends Component {
   };
 
   findStoreList() {
+    console.log("state ::::::::::", this.state);
     fetch("http://13.125.34.37:3001/stores/list")
       .then(res => res.json())
       .then(json => {
@@ -63,10 +70,10 @@ class MainScreen extends Component {
     });
   }
 
-  componentDidMount() {
-    this.findStoreList();
-    this.categoryListInit();
-    this._retrieveData();
+  async componentDidMount() {
+    await this._retrieveData();
+    await this.findStoreList();
+    await this.categoryListInit();
   }
   render() {
     return (
@@ -89,7 +96,16 @@ class MainScreen extends Component {
           itemStyle={styles.twoPickerItems}
           selectedValue={this.state.store}
           onValueChange={itemValue => {
-            this.setState({ store: itemValue });
+            console.log(itemValue);
+            for (let i = 0; i < this.state.storeList.length; i++) {
+              if (Object.values(this.state.storeList[i]).includes(itemValue)) {
+                // console.log(this.state.storeList[i]);
+                this.setState({
+                  store: itemValue,
+                  storeID: this.state.storeList[i].id
+                });
+              }
+            }
           }}
         >
           <Picker.Item label="스토어를 선택해주세요" value="" />
@@ -149,7 +165,8 @@ class MainScreen extends Component {
               country: this.state.country,
               store: this.state.store,
               category: this.state.subCategory,
-              userId: this.state.userId
+              userId: this.state.userId,
+              storeID: this.state.storeID
             });
           }}
         />

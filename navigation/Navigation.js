@@ -12,6 +12,7 @@ import HeartedItemsScreen from "../screens/HeartedItemsScreen";
 import UserScreen from "../screens/UserScreen";
 import UserSignUpScreen from "../screens/UserSignUpScreen";
 import StoreScreen from "../screens/StoreScreen";
+import FirstScreen from "../screens/FirstScreen";
 
 const RootStack = createStackNavigator({
   //   Login: {
@@ -46,6 +47,9 @@ const TabNavigator = createBottomTabNavigator({
   }
 });
 const RootSwitch = createSwitchNavigator({
+  First: {
+    screen: FirstScreen
+  },
   Login: {
     screen: LoginScreen
   },
