@@ -1,73 +1,233 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import { AsyncStorage } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AsyncStorage } from "react-native";
 
 class HeartedItemsScreen extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   color: "green"
-    // };
+    this.state = {
+      products: {},
+      color: "#dee2e6",
+      secondColor: "#f78fb3",
+      userId: 0
+    };
   }
+
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("userId");
       if (value !== null) {
         // We have data!!
-        console.log("!!!!!!!!!!!!!!");
-        console.log(value);
+        this.setState({
+          userId: value
+        });
       } else {
-        console.log("@@@@@@@@@@@@@@@@@");
+        return false;
       }
     } catch (error) {
       console.log(error);
       // Error retrieving data
     }
   };
+
+  findProducts = () => {
+    fetch(
+      `http://13.125.34.37:3001/heartedItems/list?userID=${this.state.userId}`
+    )
+      .then(result => result.json())
+      .then(json => {
+        console.log(json);
+        this.setState({
+          products: json
+        });
+      })
+      .then(() => console.log(this.state.products));
+  };
+
+  componentDidMount() {
+    this._retrieveData();
+    this.findProducts();
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>HeartedItems Screen!!!</Text>
-        <Button title="스토리지 확인" onPress={this._retrieveData.bind(this)} />
-        <View style={styles.test}>
-          <Ionicons
-            name={"md-heart-empty"}
-            size={32}
-            color={this.state.color}
-            onPress={() =>
-              this.state.color === "green"
-                ? this.setState({
-                    color: "red"
-                  })
-                : this.setState({
-                    color: "green"
-                  })
-            }
-          />
+    if (this.state.products.hasOwnProperty("heartedItems")) {
+      return (
+        <ScrollView>
+          {this.state.products.heartedItems.map(item => {
+            return (
+              <View key={item.productID} style={styles.container}>
+                <View style={styles.icon}>
+                  <Ionicons
+                    // style={styles.icon}
+                    name={"ios-heart"}
+                    size={32}
+                    color={this.state.secondColor}
+                    onPress={() => {
+                      Alert.alert(
+                        "찜 목록 제거",
+                        "찜 목록에서 제거하시겠습니까?",
+                        [
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              // console.log(
+                              //   typeof this.state.userId,
+                              //   typeof item.productID,
+                              //   typeof item.storeID
+                              // )
+                              let deleteBody = {
+                                userID: Number(this.state.userId),
+                                productID: item.productID,
+                                storeID: item.storeID
+                              };
+                              fetch(
+                                "http://13.125.34.37:3001/heartedItems/delete",
+                                {
+                                  method: "DELETE",
+                                  headers: {
+                                    "Content-Type": "application/json"
+                                  },
+                                  body: JSON.stringify(deleteBody)
+                                }
+                              )
+                                .then(result => result.json())
+                                .then(json =>
+                                  json.isDone
+                                    ? this.findProducts()
+                                    : alert("NO!!!")
+                                );
+                            }
+                          },
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancle"),
+                            style: "cancel"
+                          }
+                        ],
+                        { cancelable: false }
+                      );
+                    }}
+                  />
+                </View>
+                <Image
+                  source={{ uri: item.imageUrl }}
+                  style={styles.picture}
+                  resizeMode={"stretch"}
+                />
+                <Text style={styles.text}>{item.modelName}</Text>
+                {item.isPickupAvailable ? (
+                  <View style={styles.pickupTrue}>
+                    <Text style={styles.pickupText}>픽업가능</Text>
+                  </View>
+                ) : (
+                  <View style={styles.pickupFalse}>
+                    <Text style={styles.pickupText}>픽업불가능</Text>
+                  </View>
+                )}
+                <Text style={styles.text}>{item.storeName}</Text>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    // console.log("0000000000000000000", params);
+                    this.props.navigation.navigate("Store", {
+                      country: item.countryCode,
+                      store: item.storeCode
+                    });
+                  }}
+                >
+                  <Text style={styles.pickupText}> 매장 정보 보기 </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </ScrollView>
+      );
+    } else {
+      return (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" />
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    flexDirection: "column",
+    backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center"
+    borderColor: "#dee2e6",
+    borderWidth: 2,
+    marginLeft: 40,
+    marginRight: 40,
+    marginTop: 20
+    // justifyContent: "center"
   },
-  test: {
-    width: "10%",
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 50,
+  picture: {
+    width: 200,
+    height: 200,
+    // marginTop: 10,
+    marginBottom: 20
+    // alignItems: "center"
+    // backgroundColor: "black"
+  },
+  text: {
+    marginBottom: 13,
+    fontSize: 18
+  },
+  pickupTrue: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 115,
+    height: 35,
+    backgroundColor: "#74b816",
+    marginBottom: 7,
+    borderRadius: 20
+  },
+  pickupFalse: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 115,
+    height: 35,
+    backgroundColor: "#ff6b6b",
+    marginBottom: 7,
+    borderRadius: 20
+  },
+  pickupText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white"
+  },
+  button: {
+    // marginBottom: 20,
+    // paddingTop: 20,
+    marginTop: 10,
+    backgroundColor: "#b2bec3",
+    width: "100%",
+    height: 60,
     alignItems: "center",
     justifyContent: "center"
-    // backgroundColor: "black"
+    // borderRadius: 20
+  },
+  icon: {
+    flex: 1,
+    flexDirection: "row",
+    marginTop: 20,
+    justifyContent: "flex-end",
+    paddingLeft: "75%"
   }
 });
 

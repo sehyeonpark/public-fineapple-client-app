@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   ActivityIndicator,
   Image,
   ScrollView,
@@ -20,17 +19,20 @@ class ProductsResultScreen extends Component {
       products: {},
       color: "#dee2e6",
       secondColor: "#f78fb3",
-      isLogin: false
+      isLogin: false,
+      userDB_id: 0
     };
   }
 
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("token");
+      const userDB = await AsyncStorage.getItem("userDB_id");
       if (value !== null) {
         // We have data!!
         this.setState({
-          isLogin: true
+          isLogin: true,
+          userDB_id: userDB
         });
       } else {
         return false;
@@ -51,12 +53,12 @@ class ProductsResultScreen extends Component {
     )
       .then(result => result.json())
       .then(json => {
-        console.log(json);
+        // console.log(json);
         this.setState({
           products: json
         });
-      });
-    // .then(() => console.log(this.state.products));
+      })
+      .then(() => console.log(this.state.products));
   };
 
   componentDidMount() {
@@ -74,10 +76,12 @@ class ProductsResultScreen extends Component {
           {this.state.products.productlist.map(item => {
             const { params } = this.props.navigation.state;
             // console.log("params ::::::::::::", params);
+            // 이 부분은 여러군데에서 값을 참조하는 구조이다.
+            // 서버에서 요청하는 API 문서가 너무 꼬여있는 형태라 어쩔 수 없이 이런 참조방식이 되었다
             let userHeartedItem = {
-              userID: params.userId,
-              productID: item.productID,
-              storeID: params.store
+              userID: Number(this.state.userDB_id),
+              productID: Number(item.productID),
+              storeID: Number(params.store)
             };
             return (
               <View key={item.productID} style={styles.container}>
@@ -87,13 +91,13 @@ class ProductsResultScreen extends Component {
                     name={"ios-heart"}
                     size={32}
                     color={
-                      this.state["color" + item.productID] === undefined
-                        ? this.state.color
-                        : this.state.secondColor
+                      this.state.isLogin && item.isHearted
+                        ? this.state.secondColor
+                        : this.state.color
                     }
                     onPress={() => {
                       this.state.isLogin === true
-                        ? this.state["color" + item.productID] === undefined
+                        ? !item.isHearted
                           ? fetch("http://13.125.34.37:3001/heartedItems/add", {
                               method: "POST",
                               headers: {
@@ -101,12 +105,14 @@ class ProductsResultScreen extends Component {
                               },
                               body: JSON.stringify(userHeartedItem)
                             })
-                              .then(
-                                this.setState({
-                                  ["color" + item.productID]: "check"
-                                })
-                              )
-                              .then(alert("찜목록이 저장되었습니다!"))
+                              .then(result => result.json())
+                              .then(json => {
+                                console.log(json);
+                                if (json.isDone) {
+                                  this.findProducts();
+                                  alert("찜 목록이 저장되었습니다!");
+                                }
+                              })
                           : this.setState({
                               ["color" + item.productID]: undefined
                             }) //여기 수정해야된다!!!!!!!!!!!!!!!!!!!!!!
@@ -165,7 +171,7 @@ class ProductsResultScreen extends Component {
       );
     } else {
       return (
-        <View style={styles.container}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <ActivityIndicator size="large" />
         </View>
       );

@@ -17,7 +17,7 @@ class UserSignUpScreen extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
-    // console.log(params);
+    console.log(params);
     return (
       <View style={styles.container}>
         <Text>등록된 회원이 아닙니다.</Text>
