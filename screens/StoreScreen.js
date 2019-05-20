@@ -4,17 +4,79 @@ import {
   Text,
   View,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  Image,
+  TouchableOpacity
 } from "react-native";
 
 class StoreScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      storeDetail: {}
+    };
+  }
+
+  findStoreDetail = () => {
+    const { params } = this.props.navigation.state;
+    // console.log(params);
+    console.log("Fetch!!!!!!");
+    fetch(
+      `http://13.125.34.37:3001/stores/info?countryCode=${params.country.toLowerCase()}&storeCode=${
+        params.store
+      }`
+    )
+      .then(result => result.json())
+      .then(json =>
+        this.setState({
+          storeDetail: json
+        })
+      )
+      .then(() => console.log(this.state));
+  };
+
+  componentDidMount() {
+    this.findStoreDetail();
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>StoreScreen Screen!!!</Text>
-        {/* <ActivityIndicator size="large" /> */}
-      </View>
-    );
+    if (this.state.storeDetail.hasOwnProperty("storeName")) {
+      return (
+        <View style={styles.container}>
+          <Text>{this.state.storeDetail.storeName}</Text>
+          <Image
+            source={{ uri: this.state.storeDetail.image_url }}
+            style={styles.picture}
+            resizeMode={"stretch"}
+          />
+          <View style={styles.storeInfo}>
+            <View style={styles.test}>
+              <Text>주소 :</Text>
+              <Text>{this.state.storeDetail.address.address2}</Text>
+              <Text>{this.state.storeDetail.address.address3}</Text>
+              <Text>{this.state.storeDetail.contact}</Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => console.log("오시는길 버튼 클릭")}
+              >
+                <Text>오시는 길과 지도></Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.test2}>
+              <Text>매장 운영 시간 :</Text>
+              <Text>{this.state.storeDetail.storeHours.storeDays}</Text>
+              <Text>{this.state.storeDetail.storeHours.storeTimings}</Text>
+            </View>
+          </View>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" />
+        </View>
+      );
+    }
   }
 }
 
@@ -24,6 +86,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  picture: {
+    width: "80%",
+    height: 250
+    // marginBottom: 20
+  },
+  storeInfo: {
+    flexDirection: "row",
+    backgroundColor: "#dee2e6",
+    width: "80%",
+    paddingTop: 20,
+    paddingBottom: 20
+  },
+  test: {
+    flex: 1,
+    justifyContent: "flex-start",
+    paddingLeft: 10
+    // backgroundColor: "black"
+  },
+  test2: {
+    flex: 1
+  },
+  button: {
+    marginTop: 10
   }
 });
 
