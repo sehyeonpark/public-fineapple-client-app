@@ -1,12 +1,19 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Image,
+  ActivityIndicator
+} from "react-native";
 import { AsyncStorage } from "react-native";
 
 class UserScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLogin: false,
+      // isLogin: false,
       imageUrl: "",
       userName: ""
     };
@@ -29,6 +36,9 @@ class UserScreen extends Component {
         });
       } else {
         console.log("@@@@@@@@@@@@@@@@@");
+        this.setState({
+          isLogin: false
+        });
       }
     } catch (error) {
       console.log(error);
@@ -60,10 +70,11 @@ class UserScreen extends Component {
           <Button
             title="로그아웃"
             onPress={() => {
-              AsyncStorage.removeItem("token");
-              AsyncStorage.removeItem("image");
-              AsyncStorage.removeItem("name");
-              AsyncStorage.removeItem("userId");
+              // AsyncStorage.removeItem("token");
+              // AsyncStorage.removeItem("image");
+              // AsyncStorage.removeItem("name");
+              // AsyncStorage.removeItem("userId");
+              AsyncStorage.clear();
               this.props.navigation.navigate("Login");
             }}
           />
@@ -73,7 +84,7 @@ class UserScreen extends Component {
           /> */}
         </View>
       );
-    } else {
+    } else if (this.state.isLogin === false) {
       return (
         <View style={styles.container}>
           <Text>로그인 해주세요</Text>
@@ -81,6 +92,12 @@ class UserScreen extends Component {
             title="로그인"
             onPress={() => this.props.navigation.navigate("Login")}
           />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" />
         </View>
       );
     }

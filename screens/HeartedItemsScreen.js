@@ -20,17 +20,20 @@ class HeartedItemsScreen extends Component {
       products: {},
       color: "#dee2e6",
       secondColor: "#f78fb3",
-      userId: 0
+      userId: 0,
+      userDB_id: 0
     };
   }
 
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("userId");
+      const userDB = await AsyncStorage.getItem("userDB_id");
       if (value !== null) {
         // We have data!!
         this.setState({
-          userId: value
+          userId: value,
+          userDB_id: userDB
         });
       } else {
         return false;
@@ -42,26 +45,34 @@ class HeartedItemsScreen extends Component {
   };
 
   findProducts = () => {
-    fetch(
-      `http://13.125.34.37:3001/heartedItems/list?userID=${this.state.userId}`
-    )
-      .then(result => result.json())
-      .then(json => {
-        console.log(json);
-        this.setState({
-          products: json
+    this._retrieveData().then(() => {
+      console.log(this.state);
+      fetch(
+        `http://13.125.34.37:3001/heartedItems/list?userID=${
+          this.state.userDB_id
+        }`
+      )
+        .then(result => result.json())
+        .then(json => {
+          console.log(json);
+          this.setState({
+            products: json
+          });
         });
-      })
-      .then(() => console.log(this.state.products));
+      // .then(() => console.log(this.state.products));
+    });
   };
 
   componentDidMount() {
-    this._retrieveData();
+    // await this._retrieveData();
     this.findProducts();
   }
 
   render() {
-    if (this.state.products.hasOwnProperty("heartedItems")) {
+    if (
+      this.state.products.hasOwnProperty("heartedItems") &&
+      this.state.products.heartedItems.length !== 0
+    ) {
       return (
         <ScrollView>
           {this.state.products.heartedItems.map(item => {
@@ -82,12 +93,12 @@ class HeartedItemsScreen extends Component {
                             text: "Yes",
                             onPress: () => {
                               // console.log(
-                              //   typeof this.state.userId,
-                              //   typeof item.productID,
-                              //   typeof item.storeID
-                              // )
+                              //   this.state.userDB_id,
+                              //   item.productID,
+                              //   item.storeID
+                              // );
                               let deleteBody = {
-                                userID: Number(this.state.userId),
+                                userID: Number(this.state.userDB_id),
                                 productID: item.productID,
                                 storeID: item.storeID
                               };
@@ -102,11 +113,14 @@ class HeartedItemsScreen extends Component {
                                 }
                               )
                                 .then(result => result.json())
-                                .then(json =>
-                                  json.isDone
-                                    ? this.findProducts()
-                                    : alert("NO!!!")
-                                );
+                                .then(json => {
+                                  if (json.isDone) {
+                                    this.findProducts();
+                                    alert("찜 목록에서 제거되었습니다.");
+                                  } else {
+                                    alert("실패!!!");
+                                  }
+                                });
                             }
                           },
                           {
@@ -152,6 +166,17 @@ class HeartedItemsScreen extends Component {
             );
           })}
         </ScrollView>
+      );
+    } else if (
+      this.state.products.hasOwnProperty("heartedItems") &&
+      this.state.products.heartedItems.length === 0
+    ) {
+      return (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text>찜 목록이 없습니다</Text>
+        </View>
       );
     } else {
       return (

@@ -13,10 +13,13 @@ const Expo = require("expo");
 import { Facebook } from "expo";
 const GOOGLE_CLIENT_KEY = config.GOOGLE_CLIENT_KEY;
 const FACEBOOK_CLIENT_KEY = config.FACEBOOK_CLIENT_KEY;
+import GoogleLoginButton from "../image/GoogleLoginButton.png";
+import FacebookLoginButton from "../image/FacebookLoginButton.png";
 
 import { AsyncStorage } from "react-native";
 
 class LoginScreen extends Component {
+  //이부분 반드시 리팩토링 필요
   _storeData = async (token, image, name, userId, userDB_id) => {
     try {
       await AsyncStorage.setItem("token", token);
@@ -223,15 +226,47 @@ class LoginScreen extends Component {
     }
   }
 
-  componentDidMount() {
-    AsyncStorage.clear();
-  }
+  // componentDidMount() {
+  //   AsyncStorage.clear();
+  // }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>Login Screen!!!</Text>
-        <Button
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={this.GoogleSignIn.bind(this)}
+        >
+          <Image
+            style={{ width: 60, height: 60, marginRight: 10, marginLeft: 7 }}
+            source={GoogleLoginButton}
+          />
+          <Text style={styles.loginText}>Google 아이디로 로그인</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={this.FacebookSignIn.bind(this)}
+        >
+          <Image
+            style={{ width: 50, height: 50, marginRight: 10, marginLeft: 10 }}
+            source={FacebookLoginButton}
+            resizeMode="stretch"
+          />
+          <Text style={styles.loginText}>Facebook 아이디로 로그인</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => {
+            this.props.navigation.navigate("Home");
+            this._storeData("", "", "", "0", "0");
+          }}
+        >
+          <Text style={styles.loginText}>로그인 하지 않고 둘러보기</Text>
+        </TouchableOpacity>
+
+        {/* <Button
           title="Google Login"
           // onPress={() => this.props.navigation.navigate("Main")}
           onPress={this.GoogleSignIn.bind(this)}
@@ -245,12 +280,8 @@ class LoginScreen extends Component {
           title="로그인 하지 않고 둘러보기"
           onPress={() => {
             this.props.navigation.navigate("Home");
-            this._storeData("", "", "", "0");
+            this._storeData("", "", "", "0", "0");
           }}
-        />
-        {/* <Image
-          source={{ uri: this.state.image.data.url }}
-          style={{ width: 100, height: 100, borderRadius: 50 }}
         /> */}
       </View>
     );
@@ -264,6 +295,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  loginButton: {
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: "#ddd",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "white",
+    marginBottom: 20,
+    width: "80%",
+    height: 70
+  },
+  loginText: {
+    fontSize: 18,
+    fontWeight: "bold"
   }
 });
 

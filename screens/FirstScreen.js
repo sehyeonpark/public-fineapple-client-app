@@ -9,22 +9,70 @@ import {
   TouchableOpacity
 } from "react-native";
 import Logo from "../image/Logo.png";
+import { AsyncStorage } from "react-native";
 
 class FirstScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  _retrieveData = async () => {
+    try {
+      const userDB = await AsyncStorage.getItem("userDB_id");
+      const token = await AsyncStorage.getItem("token");
+      const user = await AsyncStorage.getItem("userId");
+      if (token !== null) {
+        // We have data!!
+        console.log("token :::::::::::::", token);
+        console.log(user);
+        console.log("userDB ::::::::::::::::", userDB);
+        this.setState({
+          token: token,
+          userId: user,
+          userDB_id: userDB
+        });
+      } else {
+        this.setState({
+          token: undefined
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      // Error retrieving data
+    }
+  };
+
+  componentDidMount() {
+    this._retrieveData();
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Image source={Logo} style={styles.logo} resizeMode={"stretch"} />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            this.props.navigation.navigate("Login");
-          }}
-        >
-          <Text>Click Me!!!</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    if (this.state.hasOwnProperty("token")) {
+      return (
+        <View style={styles.container}>
+          <Image source={Logo} style={styles.logo} resizeMode={"stretch"} />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              if (this.state.token !== undefined) {
+                this.props.navigation.navigate("Home");
+              } else {
+                this.props.navigation.navigate("Login");
+              }
+            }}
+          >
+            <Text>Click Me!!!</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" />
+        </View>
+      );
+    }
   }
 }
 

@@ -43,13 +43,16 @@ class ProductsResultScreen extends Component {
     }
   };
 
+  //서버 API에서 요청하는 body 형식이 조금 꼬여있어서 params와 state를 섞어서 fetch 보낸다
+  //리팩토링 필요
   findProducts = () => {
     const { params } = this.props.navigation.state;
     console.log("params :::::::::::::", params);
+    // console.log("state :::::::::", this.state.userDB_id);
     fetch(
       `http://13.125.34.37:3001/products/list?countryCode=${params.country.toLowerCase()}&storeCode=${
         params.store
-      }&category=${params.category}&userID=${params.userId}`
+      }&category=${params.category}&userID=${params.userDB_id}`
     )
       .then(result => result.json())
       .then(json => {
@@ -61,9 +64,9 @@ class ProductsResultScreen extends Component {
       .then(() => console.log(this.state.products));
   };
 
-  componentDidMount() {
-    this.findProducts();
-    this._retrieveData();
+  async componentDidMount() {
+    await this._retrieveData();
+    await this.findProducts();
   }
 
   render() {
@@ -81,7 +84,7 @@ class ProductsResultScreen extends Component {
             let userHeartedItem = {
               userID: Number(this.state.userDB_id),
               productID: Number(item.productID),
-              storeID: Number(params.store)
+              storeID: Number(params.storeID)
             };
             return (
               <View key={item.productID} style={styles.container}>
@@ -98,24 +101,84 @@ class ProductsResultScreen extends Component {
                     onPress={() => {
                       this.state.isLogin === true
                         ? !item.isHearted
-                          ? fetch("http://13.125.34.37:3001/heartedItems/add", {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json"
-                              },
-                              body: JSON.stringify(userHeartedItem)
-                            })
-                              .then(result => result.json())
-                              .then(json => {
-                                console.log(json);
-                                if (json.isDone) {
-                                  this.findProducts();
-                                  alert("찜 목록이 저장되었습니다!");
+                          ? Alert.alert(
+                              "찜 목록 추가",
+                              "찜 목록에 추가하시겠습니까?",
+                              [
+                                {
+                                  text: "Yes",
+                                  onPress: () =>
+                                    fetch(
+                                      "http://13.125.34.37:3001/heartedItems/add",
+                                      {
+                                        method: "POST",
+                                        headers: {
+                                          "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(userHeartedItem)
+                                      }
+                                    )
+                                      .then(result => result.json())
+                                      .then(json => {
+                                        console.log(json);
+                                        if (json.isDone) {
+                                          this.findProducts();
+                                          alert("찜 목록이 저장되었습니다!");
+                                        }
+                                      })
+                                },
+                                {
+                                  text: "Cancel",
+                                  style: "cancel"
                                 }
-                              })
-                          : this.setState({
-                              ["color" + item.productID]: undefined
-                            }) //여기 수정해야된다!!!!!!!!!!!!!!!!!!!!!!
+                              ]
+                            )
+                          : Alert.alert(
+                              "찜 목록 제거",
+                              "찜 목록에서 제거하시겠습니까?",
+                              [
+                                {
+                                  text: "Yes",
+                                  onPress: () => {
+                                    // console.log(
+                                    //   this.state.userDB_id,
+                                    //   item.productID,
+                                    //   item.storeID
+                                    // );
+                                    // let deleteBody = {
+                                    //   userID: Number(this.state.userDB_id),
+                                    //   productID: item.productID,
+                                    //   storeID: item.storeID
+                                    // };
+                                    fetch(
+                                      "http://13.125.34.37:3001/heartedItems/delete",
+                                      {
+                                        method: "DELETE",
+                                        headers: {
+                                          "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(userHeartedItem)
+                                      }
+                                    )
+                                      .then(result => result.json())
+                                      .then(json => {
+                                        if (json.isDone) {
+                                          this.findProducts();
+                                          alert("찜 목록에서 제거되었습니다.");
+                                        } else {
+                                          alert("실패!!");
+                                        }
+                                      });
+                                  }
+                                },
+                                {
+                                  text: "Cancel",
+                                  onPress: () => console.log("Cancle"),
+                                  style: "cancel"
+                                }
+                              ],
+                              { cancelable: false }
+                            )
                         : Alert.alert(
                             "찜 목록 추가",
                             "로그인이 필요한 서비스입니다. 로그인 하시겠습니까?",
