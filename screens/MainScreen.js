@@ -90,7 +90,7 @@ class MainScreen extends Component {
           <Picker.Item label="일본" value="JP" />
           <Picker.Item label="홍콩" value="HK" />
         </Picker>
-        <Text style={styles.title}>스토어를 선택해주세요</Text>
+        <Text style={styles.title}>스토어를 선택해주세요 :</Text>
         <Picker
           style={styles.twoPickers}
           itemStyle={styles.twoPickerItems}
@@ -123,7 +123,7 @@ class MainScreen extends Component {
             return arr;
           })}
         </Picker>
-        <Text style={styles.title}>제품 대분류</Text>
+        <Text style={styles.title}>제품 대분류 :</Text>
         <Picker
           style={styles.twoPickers}
           itemStyle={styles.twoPickerItems}
@@ -137,7 +137,7 @@ class MainScreen extends Component {
             <Picker.Item label={item} value={item.toLowerCase()} key={item} />
           ))}
         </Picker>
-        <Text style={styles.title}>제품 소분류</Text>
+        <Text style={styles.title}>제품 소분류 :</Text>
         <Picker
           style={styles.twoPickers}
           itemStyle={styles.twoPickerItems}
@@ -166,7 +166,8 @@ class MainScreen extends Component {
               store: this.state.store,
               category: this.state.subCategory,
               userId: this.state.userId,
-              storeID: this.state.storeID
+              storeID: this.state.storeID,
+              userDB_id: this.state.userDB_id
             });
           }}
         />

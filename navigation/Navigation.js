@@ -35,6 +35,9 @@ const UserStack = createStackNavigator({
   },
   HeartedItems: {
     screen: HeartedItemsScreen
+  },
+  Store: {
+    screen: StoreScreen
   }
 });
 
