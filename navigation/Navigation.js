@@ -1,9 +1,11 @@
+import React from "react";
 import {
   createStackNavigator,
   createAppContainer,
   createBottomTabNavigator,
   createSwitchNavigator
 } from "react-navigation";
+import { Ionicons } from "@expo/vector-icons";
 
 import LoginScreen from "../screens/LoginScreen";
 import MainScreen from "../screens/MainScreen";
@@ -41,14 +43,37 @@ const UserStack = createStackNavigator({
   }
 });
 
-const TabNavigator = createBottomTabNavigator({
-  Home: {
-    screen: RootStack
+// const TabNavigator = createBottomTabNavigator({
+//   Home: {
+//     screen: RootStack
+//   },
+//   User: {
+//     screen: UserStack
+//   }
+// });
+const TabNavigator = createBottomTabNavigator(
+  {
+    Home: { screen: RootStack },
+    User: { screen: UserStack }
   },
-  User: {
-    screen: UserStack
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        if (routeName === "Home") {
+          return <Ionicons name={"ios-home"} size={30} color={tintColor} />;
+        } else if (routeName === "User") {
+          iconName = "ios-contact";
+          return <Ionicons name={"ios-contact"} size={30} color={tintColor} />;
+        }
+      }
+    }),
+    tabBarOptions: {
+      activeTintColor: "#339af0",
+      inactiveTintColor: "gray"
+    }
   }
-});
+);
 const RootSwitch = createSwitchNavigator({
   First: {
     screen: FirstScreen

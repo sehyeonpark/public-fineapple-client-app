@@ -48,15 +48,19 @@ class StoreScreen extends Component {
     ) {
       return (
         <View style={styles.container}>
-          <Text>{this.state.storeDetail.storeName}</Text>
+          <Text style={styles.storeName}>
+            {this.state.storeDetail.storeName}
+          </Text>
           <Image
             source={{ uri: this.state.storeDetail.image_url }}
             style={styles.picture}
             resizeMode={"stretch"}
           />
           <View style={styles.storeInfo}>
-            <View style={styles.test}>
-              <Text>주소 :</Text>
+            <View style={styles.infoText1}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                주소 :
+              </Text>
               <Text>{this.state.storeDetail.address.address2}</Text>
               <Text>{this.state.storeDetail.address.address3}</Text>
               <Text>{this.state.storeDetail.contact}</Text>
@@ -68,11 +72,15 @@ class StoreScreen extends Component {
                   })
                 }
               >
-                <Text>오시는 길과 지도></Text>
+                <Text style={{ fontWeight: "bold", color: "#228be6" }}>
+                  오시는 길과 지도>
+                </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.test2}>
-              <Text>매장 운영 시간 :</Text>
+            <View style={styles.infoText2}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                매장 운영 시간 :
+              </Text>
               <Text>{this.state.storeDetail.storeHours.storeDays}</Text>
               <Text>{this.state.storeDetail.storeHours.storeTimings}</Text>
             </View>
@@ -82,15 +90,17 @@ class StoreScreen extends Component {
     } else if (this.state.isMapview) {
       return (
         <View style={styles.container}>
-          <Text>{this.state.storeDetail.storeName}</Text>
+          <Text style={styles.storeName}>
+            {this.state.storeDetail.storeName}
+          </Text>
           <View style={{ width: "95%", height: 300 }}>
             <MapView
               style={{ width: "100%", flex: 1 }}
               initialRegion={{
                 latitude: this.state.storeDetail.storeLocation.storelatitude,
                 longitude: this.state.storeDetail.storeLocation.storelongitude,
-                latitudeDelta: 0.002,
-                longitudeDelta: 0.001
+                latitudeDelta: 0.001,
+                longitudeDelta: 0.0005
               }}
             >
               <MapView.Marker
@@ -104,8 +114,10 @@ class StoreScreen extends Component {
             </MapView>
           </View>
           <View style={styles.storeInfo}>
-            <View style={styles.test}>
-              <Text>주소 :</Text>
+            <View style={styles.infoText1}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                주소 :
+              </Text>
               <Text>{this.state.storeDetail.address.address2}</Text>
               <Text>{this.state.storeDetail.address.address3}</Text>
               <Text>{this.state.storeDetail.contact}</Text>
@@ -117,11 +129,15 @@ class StoreScreen extends Component {
                   })
                 }
               >
-                <Text>매장 운영 시간 보기></Text>
+                <Text style={{ fontWeight: "bold", color: "#228be6" }}>
+                  매장 운영 시간 보기>
+                </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.test2}>
-              <Text>찾아오시는 길 :</Text>
+            <View style={styles.infoText2}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                찾아오시는 길 :
+              </Text>
               <Text>{this.state.storeDetail.way_to_come}</Text>
             </View>
           </View>
@@ -140,7 +156,7 @@ class StoreScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center"
   },
@@ -151,22 +167,28 @@ const styles = StyleSheet.create({
   },
   storeInfo: {
     flexDirection: "row",
-    backgroundColor: "#dee2e6",
+    backgroundColor: "#f1f3f5",
     width: "95%",
     paddingTop: 20,
     paddingBottom: 20
   },
-  test: {
+  infoText1: {
     flex: 1,
     justifyContent: "flex-start",
     paddingLeft: 10
     // backgroundColor: "black"
   },
-  test2: {
-    flex: 1
+  infoText2: {
+    flex: 1,
+    paddingRight: 10
   },
   button: {
     marginTop: 10
+  },
+  storeName: {
+    fontSize: 23,
+    fontWeight: "bold",
+    marginBottom: 20
   }
 });
 

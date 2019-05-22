@@ -173,7 +173,11 @@ class HeartedItemsScreen extends Component {
     ) {
       return (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center"
+          }}
         >
           <Text>찜 목록이 없습니다</Text>
         </View>
