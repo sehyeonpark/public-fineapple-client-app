@@ -50,9 +50,11 @@ class ProductsResultScreen extends Component {
     console.log("params :::::::::::::", params);
     // console.log("state :::::::::", this.state.userDB_id);
     fetch(
-      `http://13.125.34.37:3001/products/list?countryCode=${params.country.toLowerCase()}&storeCode=${
-        params.store
-      }&category=${params.category}&userID=${params.userDB_id}`
+      `http://13.125.34.37:3001/products/list?countryCode=${
+        params.country
+      }&storeCode=${params.store}&category=${params.category}&userID=${Number(
+        params.userDB_id
+      )}`
     )
       .then(result => result.json())
       .then(json => {
@@ -74,102 +76,122 @@ class ProductsResultScreen extends Component {
     // console.log(params);
     // const isLogin = this._retrieveData();
     if (this.state.products.hasOwnProperty("productlist")) {
-      return (
-        <ScrollView>
-          {this.state.products.productlist.map(item => {
-            const { params } = this.props.navigation.state;
-            // console.log("params ::::::::::::", params);
-            // 이 부분은 여러군데에서 값을 참조하는 구조이다.
-            // 서버에서 요청하는 API 문서가 너무 꼬여있는 형태라 어쩔 수 없이 이런 참조방식이 되었다
-            let userHeartedItem = {
-              userID: Number(this.state.userDB_id),
-              productID: Number(item.productID),
-              storeID: Number(params.storeID)
-            };
-            return (
-              <View key={item.productID} style={styles.container}>
-                <View style={styles.icon}>
-                  <Ionicons
-                    // style={styles.icon}
-                    name={"ios-heart"}
-                    size={32}
-                    color={
-                      this.state.isLogin && item.isHearted
-                        ? this.state.secondColor
-                        : this.state.color
-                    }
-                    onPress={() => {
-                      this.state.isLogin === true
-                        ? !item.isHearted
-                          ? Alert.alert(
+      if (this.state.products.productlist.length !== 0) {
+        return (
+          <ScrollView>
+            {this.state.products.productlist.map(item => {
+              const { params } = this.props.navigation.state;
+              // console.log("params ::::::::::::", params);
+              // 이 부분은 여러군데에서 값을 참조하는 구조이다.
+              // 서버에서 요청하는 API 문서가 너무 꼬여있는 형태라 어쩔 수 없이 이런 참조방식이 되었다
+              let userHeartedItem = {
+                userID: Number(this.state.userDB_id),
+                productID: Number(item.productID),
+                storeID: Number(params.storeID)
+              };
+              return (
+                <View key={item.productID} style={styles.container}>
+                  <View style={styles.icon}>
+                    <Ionicons
+                      // style={styles.icon}
+                      name={"ios-heart"}
+                      size={32}
+                      color={
+                        this.state.isLogin && item.isHearted
+                          ? this.state.secondColor
+                          : this.state.color
+                      }
+                      onPress={() => {
+                        this.state.isLogin === true
+                          ? !item.isHearted
+                            ? Alert.alert(
+                                "찜 목록 추가",
+                                "찜 목록에 추가하시겠습니까?",
+                                [
+                                  {
+                                    text: "Yes",
+                                    onPress: () =>
+                                      fetch(
+                                        "http://13.125.34.37:3001/heartedItems/add",
+                                        {
+                                          method: "POST",
+                                          headers: {
+                                            "Content-Type": "application/json"
+                                          },
+                                          body: JSON.stringify(userHeartedItem)
+                                        }
+                                      )
+                                        .then(result => result.json())
+                                        .then(json => {
+                                          console.log(json);
+                                          if (json.isDone) {
+                                            this.findProducts();
+                                            alert("찜 목록이 저장되었습니다!");
+                                          }
+                                        })
+                                  },
+                                  {
+                                    text: "Cancel",
+                                    style: "cancel"
+                                  }
+                                ]
+                              )
+                            : Alert.alert(
+                                "찜 목록 제거",
+                                "찜 목록에서 제거하시겠습니까?",
+                                [
+                                  {
+                                    text: "Yes",
+                                    onPress: () => {
+                                      // console.log(
+                                      //   this.state.userDB_id,
+                                      //   item.productID,
+                                      //   item.storeID
+                                      // );
+                                      // let deleteBody = {
+                                      //   userID: Number(this.state.userDB_id),
+                                      //   productID: item.productID,
+                                      //   storeID: item.storeID
+                                      // };
+                                      fetch(
+                                        "http://13.125.34.37:3001/heartedItems/delete",
+                                        {
+                                          method: "DELETE",
+                                          headers: {
+                                            "Content-Type": "application/json"
+                                          },
+                                          body: JSON.stringify(userHeartedItem)
+                                        }
+                                      )
+                                        .then(result => result.json())
+                                        .then(json => {
+                                          if (json.isDone) {
+                                            this.findProducts();
+                                            alert(
+                                              "찜 목록에서 제거되었습니다."
+                                            );
+                                          } else {
+                                            alert("실패!!");
+                                          }
+                                        });
+                                    }
+                                  },
+                                  {
+                                    text: "Cancel",
+                                    onPress: () => console.log("Cancle"),
+                                    style: "cancel"
+                                  }
+                                ],
+                                { cancelable: false }
+                              )
+                          : Alert.alert(
                               "찜 목록 추가",
-                              "찜 목록에 추가하시겠습니까?",
+                              "로그인이 필요한 서비스입니다. 로그인 하시겠습니까?",
                               [
                                 {
                                   text: "Yes",
                                   onPress: () =>
-                                    fetch(
-                                      "http://13.125.34.37:3001/heartedItems/add",
-                                      {
-                                        method: "POST",
-                                        headers: {
-                                          "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify(userHeartedItem)
-                                      }
-                                    )
-                                      .then(result => result.json())
-                                      .then(json => {
-                                        console.log(json);
-                                        if (json.isDone) {
-                                          this.findProducts();
-                                          alert("찜 목록이 저장되었습니다!");
-                                        }
-                                      })
-                                },
-                                {
-                                  text: "Cancel",
-                                  style: "cancel"
-                                }
-                              ]
-                            )
-                          : Alert.alert(
-                              "찜 목록 제거",
-                              "찜 목록에서 제거하시겠습니까?",
-                              [
-                                {
-                                  text: "Yes",
-                                  onPress: () => {
-                                    // console.log(
-                                    //   this.state.userDB_id,
-                                    //   item.productID,
-                                    //   item.storeID
-                                    // );
-                                    // let deleteBody = {
-                                    //   userID: Number(this.state.userDB_id),
-                                    //   productID: item.productID,
-                                    //   storeID: item.storeID
-                                    // };
-                                    fetch(
-                                      "http://13.125.34.37:3001/heartedItems/delete",
-                                      {
-                                        method: "DELETE",
-                                        headers: {
-                                          "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify(userHeartedItem)
-                                      }
-                                    )
-                                      .then(result => result.json())
-                                      .then(json => {
-                                        if (json.isDone) {
-                                          this.findProducts();
-                                          alert("찜 목록에서 제거되었습니다.");
-                                        } else {
-                                          alert("실패!!");
-                                        }
-                                      });
-                                  }
+                                    this.props.navigation.navigate("Login")
                                 },
                                 {
                                   text: "Cancel",
@@ -178,60 +200,52 @@ class ProductsResultScreen extends Component {
                                 }
                               ],
                               { cancelable: false }
-                            )
-                        : Alert.alert(
-                            "찜 목록 추가",
-                            "로그인이 필요한 서비스입니다. 로그인 하시겠습니까?",
-                            [
-                              {
-                                text: "Yes",
-                                onPress: () =>
-                                  this.props.navigation.navigate("Login")
-                              },
-                              {
-                                text: "Cancel",
-                                onPress: () => console.log("Cancle"),
-                                style: "cancel"
-                              }
-                            ],
-                            { cancelable: false }
-                          );
-                    }}
+                            );
+                      }}
+                    />
+                  </View>
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={styles.picture}
+                    resizeMode={"stretch"}
                   />
+                  <Text style={styles.text}>{item.modelName}</Text>
+                  {item.isPickupAvailable ? (
+                    <View style={styles.pickupTrue}>
+                      <Text style={styles.pickupText}>픽업가능</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.pickupFalse}>
+                      <Text style={styles.pickupText}>픽업불가능</Text>
+                    </View>
+                  )}
+                  <Text style={styles.text}>{item.storeName}</Text>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                      // console.log("0000000000000000000", params);
+                      this.props.navigation.navigate("Store", {
+                        country: params.country,
+                        store: params.store
+                      });
+                    }}
+                  >
+                    <Text style={styles.pickupText}> 매장 정보 보기 </Text>
+                  </TouchableOpacity>
                 </View>
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={styles.picture}
-                  resizeMode={"stretch"}
-                />
-                <Text style={styles.text}>{item.modelName}</Text>
-                {item.isPickupAvailable ? (
-                  <View style={styles.pickupTrue}>
-                    <Text style={styles.pickupText}>픽업가능</Text>
-                  </View>
-                ) : (
-                  <View style={styles.pickupFalse}>
-                    <Text style={styles.pickupText}>픽업불가능</Text>
-                  </View>
-                )}
-                <Text style={styles.text}>{item.storeName}</Text>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    // console.log("0000000000000000000", params);
-                    this.props.navigation.navigate("Store", {
-                      country: params.country,
-                      store: params.store
-                    });
-                  }}
-                >
-                  <Text style={styles.pickupText}> 매장 정보 보기 </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </ScrollView>
-      );
+              );
+            })}
+          </ScrollView>
+        );
+      } else {
+        return (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text>리스트가 없습니다</Text>
+          </View>
+        );
+      }
     } else {
       return (
         <View style={{ flex: 1, justifyContent: "center" }}>

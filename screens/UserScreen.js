@@ -5,7 +5,9 @@ import {
   View,
   Button,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { AsyncStorage } from "react-native";
 
@@ -63,35 +65,76 @@ class UserScreen extends Component {
             }}
           />
           <Text style={styles.name}>{this.state.userName}</Text>
-          <Button
+          {/* <Button
             title="찜 목록"
             onPress={() => this.props.navigation.navigate("HeartedItems")}
           />
           <Button
             title="로그아웃"
             onPress={() => {
-              // AsyncStorage.removeItem("token");
-              // AsyncStorage.removeItem("image");
-              // AsyncStorage.removeItem("name");
-              // AsyncStorage.removeItem("userId");
               AsyncStorage.clear();
+              alert("로그아웃 되었습니다. 다시 로그인 해주세요!");
               this.props.navigation.navigate("Login");
             }}
-          />
-          {/* <Button
-            title="스토리지 확인"
-            onPress={this._retrieveData.bind(this)}
           /> */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate("HeartedItems")}
+          >
+            <Text style={styles.buttonText}>찜 목록</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              Alert.alert("로그아웃", "로그아웃 하시겠습니까?", [
+                {
+                  text: "Yes",
+                  onPress: () => {
+                    AsyncStorage.clear()
+                      .then(() =>
+                        alert("로그아웃 되었습니다. 다시 로그인 해주세요.")
+                      )
+                      .then(() => this.props.navigation.navigate("Login"));
+                  }
+                },
+                {
+                  text: "Cancel",
+                  style: "cancel"
+                }
+              ]);
+            }}
+          >
+            <Text style={styles.buttonText}>로그아웃</Text>
+          </TouchableOpacity>
         </View>
       );
     } else if (this.state.isLogin === false) {
       return (
         <View style={styles.container}>
-          <Text>로그인 해주세요</Text>
+          {/* <Text>로그인 해주세요</Text>
           <Button
             title="로그인"
             onPress={() => this.props.navigation.navigate("Login")}
-          />
+          /> */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              Alert.alert("로그인", "로그인 하시겠습니까?", [
+                {
+                  text: "Yes",
+                  onPress: () => {
+                    this.props.navigation.navigate("Login");
+                  }
+                },
+                {
+                  text: "Cancel",
+                  style: "cancel"
+                }
+              ]);
+            }}
+          >
+            <Text style={styles.buttonText}>로그인</Text>
+          </TouchableOpacity>
         </View>
       );
     } else {
@@ -107,14 +150,29 @@ class UserScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center"
   },
   name: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 20
+    marginBottom: 30
+  },
+  button: {
+    borderWidth: 1.25,
+    borderRadius: 25,
+    borderColor: "#495057",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+    height: 50,
+    marginTop: 20
+  },
+  buttonText: {
+    fontSize: 14.5,
+    fontWeight: "bold",
+    color: "#495057"
   }
 });
 

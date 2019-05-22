@@ -86,9 +86,9 @@ class MainScreen extends Component {
           onValueChange={itemValue => this.setState({ country: itemValue })}
         >
           <Picker.Item label="국가를 선택해주세요" value="" />
-          <Picker.Item label="대한민국" value="KR" />
-          <Picker.Item label="일본" value="JP" />
-          <Picker.Item label="홍콩" value="HK" />
+          <Picker.Item label="대한민국" value="kr" />
+          <Picker.Item label="일본" value="jp" />
+          <Picker.Item label="홍콩" value="hk" />
         </Picker>
         <Text style={styles.title}>스토어를 선택해주세요 :</Text>
         <Picker

@@ -43,8 +43,17 @@ class FirstScreen extends Component {
     }
   };
 
+  nextPage = () => {
+    if (this.state.token !== undefined) {
+      this.props.navigation.navigate("Home");
+    } else {
+      this.props.navigation.navigate("Login");
+    }
+  };
+
   componentDidMount() {
     this._retrieveData();
+    setTimeout(this.nextPage, 2000);
   }
 
   render() {
@@ -52,7 +61,7 @@ class FirstScreen extends Component {
       return (
         <View style={styles.container}>
           <Image source={Logo} style={styles.logo} resizeMode={"stretch"} />
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.button}
             onPress={() => {
               if (this.state.token !== undefined) {
@@ -63,7 +72,7 @@ class FirstScreen extends Component {
             }}
           >
             <Text>Click Me!!!</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       );
     } else {
@@ -79,7 +88,7 @@ class FirstScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f1f3f5",
     alignItems: "center",
     justifyContent: "center"
   },
