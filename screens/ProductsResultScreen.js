@@ -279,7 +279,9 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 13,
-    fontSize: 18
+    fontSize: 18,
+    marginLeft: 10,
+    marginRight: 10
   },
   pickupTrue: {
     alignItems: "center",

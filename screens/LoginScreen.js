@@ -273,24 +273,6 @@ class LoginScreen extends Component {
           >
             <Text style={styles.loginText}>로그인 하지 않고 둘러보기</Text>
           </TouchableOpacity>
-
-          {/* <Button
-          title="Google Login"
-          // onPress={() => this.props.navigation.navigate("Main")}
-          onPress={this.GoogleSignIn.bind(this)}
-          // onPress={() => console.log(Expo.Facebook)}
-        />
-        <Button
-          title="Facebook Login"
-          onPress={this.FacebookSignIn.bind(this)}
-        />
-        <Button
-          title="로그인 하지 않고 둘러보기"
-          onPress={() => {
-            this.props.navigation.navigate("Home");
-            this._storeData("", "", "", "0", "0");
-          }}
-        /> */}
         </View>
       );
     } else {
