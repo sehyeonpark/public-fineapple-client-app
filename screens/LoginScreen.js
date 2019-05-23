@@ -166,10 +166,10 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify(returnData)
       })
-        .then(result => {
-          console.log("!!!!!!!!!!!!!!!!!!!", result);
-          result.json();
-        })
+        .then(result =>
+          // console.log("!!!!!!!!!!!!!!!!!!!", result);
+          result.json()
+        )
         .then(json => {
           console.log(json);
           if (json.isMember) {
