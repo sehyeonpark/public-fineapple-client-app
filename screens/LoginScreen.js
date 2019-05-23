@@ -159,14 +159,17 @@ class LoginScreen extends Component {
       let userId = user.id;
       console.log(user);
       // alert("Logged in! " + "Hi " + user.name);
-      fetch("http://localhost:3001/users/auth", {
+      fetch("http://13.125.34.37:3001/users/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(returnData)
       })
-        .then(result => result.json())
+        .then(result => {
+          console.log("!!!!!!!!!!!!!!!!!!!", result);
+          result.json();
+        })
         .then(json => {
           console.log(json);
           if (json.isMember) {
