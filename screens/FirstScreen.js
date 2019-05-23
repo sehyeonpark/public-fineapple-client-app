@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ActivityIndicator,
-  ScrollView,
-  Image,
-  TouchableOpacity
-} from "react-native";
+import { StyleSheet, View, ActivityIndicator, Image } from "react-native";
 import Logo from "../image/Logo.png";
 import { AsyncStorage } from "react-native";
 
@@ -17,6 +9,8 @@ class FirstScreen extends Component {
     this.state = {};
   }
 
+  //자동 로그인을 위한 로직이지만 서버 로직이 완성되면 리팩토링을 하여
+  //서버와 통신하는 형태로 변경해야 함
   _retrieveData = async () => {
     try {
       const userDB = await AsyncStorage.getItem("userDB_id");
@@ -43,6 +37,8 @@ class FirstScreen extends Component {
     }
   };
 
+  //todo: 자동 로그인을 하기 위한 로직이지만 아직은 서버와 통신하지 않는 형태
+  //서버에서 자동 로그인 체크 로직이 만들어지면 리팩토링 필요
   nextPage = () => {
     if (this.state.token !== undefined) {
       this.props.navigation.navigate("Home");
