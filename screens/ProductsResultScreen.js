@@ -19,20 +19,20 @@ class ProductsResultScreen extends Component {
       products: {},
       color: "#dee2e6",
       secondColor: "#f78fb3",
-      isLogin: false,
-      userDB_id: 0
+      isLogin: false
+      // userDB_id: 0
     };
   }
 
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem("token");
-      const userDB = await AsyncStorage.getItem("userDB_id");
+      // const userDB = await AsyncStorage.getItem("userDB_id");
       if (value !== null) {
         // We have data!!
         this.setState({
-          isLogin: true,
-          userDB_id: userDB
+          isLogin: true
+          // userDB_id: userDB
         });
       } else {
         return false;
@@ -85,7 +85,8 @@ class ProductsResultScreen extends Component {
               // 이 부분은 여러군데에서 값을 참조하는 구조이다.
               // 서버에서 요청하는 API 문서가 너무 꼬여있는 형태라 어쩔 수 없이 이런 참조방식이 되었다
               let userHeartedItem = {
-                userID: Number(this.state.userDB_id),
+                // userID: Number(this.state.userDB_id),
+                userID: Number(params.userDB_id),
                 productID: Number(item.productID),
                 storeID: Number(params.storeID)
               };

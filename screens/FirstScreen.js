@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, ActivityIndicator, Image } from "react-native";
 import Logo from "../image/Logo.png";
 import { AsyncStorage } from "react-native";
+import { jsxSpreadAttribute } from "@babel/types";
 
 class FirstScreen extends Component {
   constructor(props) {
@@ -14,17 +15,19 @@ class FirstScreen extends Component {
   _retrieveData = async () => {
     try {
       const userDB = await AsyncStorage.getItem("userDB_id");
-      const token = await AsyncStorage.getItem("token");
       const user = await AsyncStorage.getItem("userId");
+      const provider = await AsyncStorage.getItem("provider");
+      const token = await AsyncStorage.getItem("token");
       if (token !== null) {
         // We have data!!
         console.log("token :::::::::::::", token);
-        console.log(user);
-        console.log("userDB ::::::::::::::::", userDB);
+        // console.log(user);
+        // console.log("userDB ::::::::::::::::", userDB);
         this.setState({
           token: token,
           userId: user,
-          userDB_id: userDB
+          userDB_id: userDB,
+          provider: provider
         });
       } else {
         this.setState({
@@ -37,10 +40,31 @@ class FirstScreen extends Component {
     }
   };
 
+  loginCheck = () => {
+    this._retrieveData().then(() =>
+      fetch(
+        `http://13.125.34.37:3001/users/check?provider=${this.state.provider}`,
+        {
+          method: "GET",
+          headers: {
+            "x-access-token": this.state.token
+          }
+        }
+      )
+        .then(data => data.json())
+        .then(json => {
+          console.log(json);
+          this.setState({
+            isLogged: json.isLogged
+          });
+        })
+    );
+  };
+
   //todo: 자동 로그인을 하기 위한 로직이지만 아직은 서버와 통신하지 않는 형태
   //서버에서 자동 로그인 체크 로직이 만들어지면 리팩토링 필요
   nextPage = () => {
-    if (this.state.token !== undefined) {
+    if (this.state.isLogged) {
       this.props.navigation.navigate("Home");
     } else {
       this.props.navigation.navigate("Login");
@@ -48,7 +72,7 @@ class FirstScreen extends Component {
   };
 
   componentDidMount() {
-    this._retrieveData();
+    this.loginCheck();
     setTimeout(this.nextPage, 2000);
   }
 
