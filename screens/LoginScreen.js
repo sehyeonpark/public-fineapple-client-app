@@ -26,12 +26,13 @@ class LoginScreen extends Component {
     };
   }
   //이부분 반드시 리팩토링 필요
-  _storeData = async (token, image, name, userId, userDB_id) => {
+  _storeData = async (token, image, name, userId, provider, userDB_id) => {
     try {
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("image", image);
       await AsyncStorage.setItem("name", name);
       await AsyncStorage.setItem("userDB_id", userDB_id);
+      await AsyncStorage.setItem("provider", provider);
       await AsyncStorage.setItem("userId", userId);
       let isSave = await AsyncStorage.getItem("userId");
       if (isSave) return true;
@@ -64,15 +65,16 @@ class LoginScreen extends Component {
         })
           .then(result => result.json())
           .then(json => {
+            console.log(json);
             if (json.isMember) {
-              console.log(json);
               console.log("login!!!!!!!!!!!");
               // console.log(result.user.photoUrl);
               this._storeData(
-                result.accessToken,
+                json.token,
                 result.user.photoUrl,
                 result.user.name,
                 result.user.id,
+                "google",
                 json.userDB_id.toString()
               ).then(save => {
                 if (save) {
@@ -157,7 +159,7 @@ class LoginScreen extends Component {
       let userId = user.id;
       console.log(user);
       // alert("Logged in! " + "Hi " + user.name);
-      fetch("http://13.125.34.37:3001/users/auth", {
+      fetch("http://localhost:3001/users/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -169,14 +171,15 @@ class LoginScreen extends Component {
           console.log(json);
           if (json.isMember) {
             console.log("login!!!!!!!!!!!");
-            console.log(token);
-            console.log(json);
-            console.log(userId);
+            // console.log(token);
+            // console.log(json);
+            // console.log(userId);
             this._storeData(
-              token,
+              json.token,
               userImage,
               userName,
               userId,
+              "facebook",
               json.userDB_id.toString()
             ).then(save => {
               if (save) {
