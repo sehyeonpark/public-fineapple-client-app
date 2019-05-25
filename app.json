@@ -5,11 +5,11 @@
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./image/Loading.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./image/Logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +18,12 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "me.fine-apple"
+    },
+    "android": {
+      "package": "me.fineapple",
+      "versionCode": 2
     },
     "facebookScheme": "fb969319146756204"
   }
