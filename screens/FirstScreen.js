@@ -1,8 +1,14 @@
 import React, { Component } from "react";
-import { StyleSheet, View, ActivityIndicator, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Image,
+  Dimensions
+} from "react-native";
 import Logo from "../image/Logo.png";
 import { AsyncStorage } from "react-native";
-import { jsxSpreadAttribute } from "@babel/types";
+const { height, width } = Dimensions.get("window");
 
 class FirstScreen extends Component {
   constructor(props) {
@@ -18,9 +24,12 @@ class FirstScreen extends Component {
       const user = await AsyncStorage.getItem("userId");
       const provider = await AsyncStorage.getItem("provider");
       const token = await AsyncStorage.getItem("token");
+      // console.log("width::::", width);
+      // console.log("height::::", height);
+      // console.log("비율::::", height);
       if (token !== null) {
         // We have data!!
-        console.log("token :::::::::::::", token);
+        // console.log("token :::::::::::::", token);
         // console.log(user);
         // console.log("userDB ::::::::::::::::", userDB);
         this.setState({
@@ -43,7 +52,7 @@ class FirstScreen extends Component {
   loginCheck = () => {
     this._retrieveData().then(() =>
       fetch(
-        `http://13.125.34.37:3001/users/check?provider=${this.state.provider}`,
+        `https://ec2.fine-apple.me/users/check?provider=${this.state.provider}`,
         {
           method: "GET",
           headers: {
@@ -58,11 +67,10 @@ class FirstScreen extends Component {
             isLogged: json.isLogged
           });
         })
+        .then(() => setTimeout(this.nextPage, 1000))
     );
   };
 
-  //todo: 자동 로그인을 하기 위한 로직이지만 아직은 서버와 통신하지 않는 형태
-  //서버에서 자동 로그인 체크 로직이 만들어지면 리팩토링 필요
   nextPage = () => {
     if (this.state.isLogged) {
       this.props.navigation.navigate("Home");
@@ -73,14 +81,14 @@ class FirstScreen extends Component {
 
   componentDidMount() {
     this.loginCheck();
-    setTimeout(this.nextPage, 2000);
+    // setTimeout(this.nextPage, 2000);
   }
 
   render() {
     if (this.state.hasOwnProperty("token")) {
       return (
         <View style={styles.container}>
-          <Image source={Logo} style={styles.logo} resizeMode={"stretch"} />
+          {/* <Image source={Logo} style={styles.logo} resizeMode={"stretch"} /> */}
           {/* <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -93,6 +101,8 @@ class FirstScreen extends Component {
           >
             <Text>Click Me!!!</Text>
           </TouchableOpacity> */}
+
+          <ActivityIndicator size="large" />
         </View>
       );
     } else {

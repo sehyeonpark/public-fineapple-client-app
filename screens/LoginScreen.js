@@ -11,7 +11,8 @@ import {
 import config from "../config";
 const Expo = require("expo");
 import { Facebook } from "expo";
-const GOOGLE_CLIENT_KEY = config.GOOGLE_CLIENT_KEY;
+const GOOGLE_IOS_CLIENT_KEY = config.GOOGLE_IOS_CLIENT_KEY;
+const GOOGLE_ANDROID_CLIENT_KEY = config.GOOGLE_ANDROID_CLIENT_KEY;
 const FACEBOOK_CLIENT_KEY = config.FACEBOOK_CLIENT_KEY;
 import GoogleLoginButton from "../image/GoogleLoginButton.png";
 import FacebookLoginButton from "../image/FacebookLoginButton.png";
@@ -45,7 +46,10 @@ class LoginScreen extends Component {
   async GoogleSignIn() {
     try {
       const result = await Expo.Google.logInAsync({
-        iosClientId: GOOGLE_CLIENT_KEY,
+        iosClientId: GOOGLE_IOS_CLIENT_KEY,
+        androidClientId: GOOGLE_ANDROID_CLIENT_KEY,
+        androidStandaloneAppClientId: GOOGLE_ANDROID_CLIENT_KEY,
+        iosStandaloneAppClientId: GOOGLE_IOS_CLIENT_KEY,
         scopes: ["profile", "email"]
       });
       if (result.type === "success") {
@@ -53,10 +57,11 @@ class LoginScreen extends Component {
         // console.log(result.accessToken);
         let returnData = {
           user_id: result.user.id,
-          provider: "google"
+          provider: "google",
+          email: result.user.email
           // access_token: result.accessToken
         };
-        fetch("http://13.125.34.37:3001/users/auth", {
+        fetch("https://ec2.fine-apple.me/users/auth", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -95,12 +100,12 @@ class LoginScreen extends Component {
               // });
               Alert.alert(
                 "회원가입",
-                "등록된 회원이 아닙니다. 구글 아이다로 회원가입 하시겠습니까?",
+                "등록된 회원이 아닙니다. 구글 아이디로 회원가입 하시겠습니까?",
                 [
                   {
                     text: "Yes",
                     onPress: () => {
-                      fetch("http://13.125.34.37:3001/users/signup", {
+                      fetch("https://ec2.fine-apple.me/users/signup", {
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json"
@@ -139,7 +144,7 @@ class LoginScreen extends Component {
     const { type, token } = await Facebook.logInWithReadPermissionsAsync(
       FACEBOOK_CLIENT_KEY,
       {
-        permissions: ["public_profile"]
+        permissions: ["public_profile", "email"]
       }
     );
     if (type === "success") {
@@ -147,19 +152,20 @@ class LoginScreen extends Component {
       console.log(token);
       // Get the user's name using Facebook's Graph API
       const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${token}&fields=id,name,picture.type(large)`
+        `https://graph.facebook.com/me?access_token=${token}&fields=id,email,name,picture.type(large)`
       );
       let user = await response.json();
       let returnData = {
         user_id: user.id,
-        provider: "facebook"
+        provider: "facebook",
+        email: user.email
       };
       let userImage = user.picture.data.url;
       let userName = user.name;
       let userId = user.id;
-      console.log(user);
+      console.log("이거 보여야돼!!!!!!!!!", user);
       // alert("Logged in! " + "Hi " + user.name);
-      fetch("http://13.125.34.37:3001/users/auth", {
+      fetch("https://ec2.fine-apple.me/users/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -203,12 +209,12 @@ class LoginScreen extends Component {
             // });
             Alert.alert(
               "회원가입",
-              "등록된 회원이 아닙니다. 페이스북 아이다로 회원가입 하시겠습니까?",
+              "등록된 회원이 아닙니다. 페이스북 아이디로 회원가입 하시겠습니까?",
               [
                 {
                   text: "Yes",
                   onPress: () => {
-                    fetch("http://13.125.34.37:3001/users/signup", {
+                    fetch("https://ec2.fine-apple.me/users/signup", {
                       method: "POST",
                       headers: {
                         "Content-Type": "application/json"
@@ -238,56 +244,76 @@ class LoginScreen extends Component {
     }
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        isLoading: true
-      });
-    }, 1000);
-  }
+  // componentDidMount() {
+  //   setTimeout(() => {
+  //     this.setState({
+  //       isLoading: true
+  //     });
+  //   }, 1000);
+  // }
 
   render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.googleLoginButton}
-            onPress={this.GoogleSignIn.bind(this)}
+    // if (this.state.isLoading) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.googleLoginButton}
+          onPress={this.GoogleSignIn.bind(this)}
+        >
+          <Image
+            style={styles.buttonImage}
+            source={GoogleLoginButton}
+            resizeMode="stretch"
+          />
+          <Text
+            style={styles.loginText}
+            // allowFontScaling
+            // maxFontSizeMultiplier={1}
+            adjustsFontSizeToFit
+            numberOfLines={1}
           >
-            <Image style={styles.buttonImage} source={GoogleLoginButton} />
-            <Text style={styles.loginText}>Google 아이디로 로그인</Text>
-          </TouchableOpacity>
+            Google 아이디로 로그인
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.facebookLoginButton}
-            onPress={this.FacebookSignIn.bind(this)}
+        <TouchableOpacity
+          style={styles.facebookLoginButton}
+          onPress={this.FacebookSignIn.bind(this)}
+        >
+          <Image
+            style={styles.buttonImage}
+            source={FacebookLoginButton}
+            resizeMode="stretch"
+          />
+          <Text
+            style={styles.loginText}
+            allowFontScaling
+            // maxFontSizeMultiplier={0}
+            // adjustsFontSizeToFit
+            // numberOfLines={1}
           >
-            <Image
-              style={styles.buttonImage}
-              source={FacebookLoginButton}
-              resizeMode="stretch"
-            />
-            <Text style={styles.loginText}>Facebook 아이디로 로그인</Text>
-          </TouchableOpacity>
+            Facebook 아이디로 로그인
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.notLoginButton}
-            onPress={() => {
-              this.props.navigation.navigate("Home");
-              this._storeData("", "", "", "0", "0");
-            }}
-          >
-            <Text style={styles.loginText}>로그인 하지 않고 둘러보기</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.container}>
-          <ActivityIndicator size="large" />
-        </View>
-      );
-    }
+        <TouchableOpacity
+          style={styles.notLoginButton}
+          onPress={() => {
+            this.props.navigation.navigate("Home");
+            this._storeData("", "", "", "0", "", "0");
+          }}
+        >
+          <Text style={styles.notLoginText}>로그인 하지 않고 둘러보기</Text>
+        </TouchableOpacity>
+      </View>
+    );
+    // } else {
+    //   return (
+    //     <View style={styles.container}>
+    //       <ActivityIndicator size="large" />
+    //     </View>
+    //   );
+    // }
   }
 }
 
@@ -350,10 +376,24 @@ const styles = StyleSheet.create({
     height: 70,
     backgroundColor: "#34495edd"
   },
+
   loginText: {
     fontSize: 20.5,
+    // fontSize: 15,
+    fontWeight: "bold",
+    color: "white",
+    // backgroundColor: "black",
+    flex: 1,
+    paddingRight: 10
+  },
+  notLoginText: {
+    fontSize: 20.5,
+    // fontSize: 17,
     fontWeight: "bold",
     color: "white"
+    // backgroundColor: "black",
+    // flex: 1,
+    // paddingRight: 10
   },
   buttonImage: {
     marginLeft: 20,
@@ -361,6 +401,12 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35
   }
+  // buttonImage: {
+  //   marginLeft: 20,
+  //   marginRight: 20,
+  //   width: "10%",
+  //   height: "50%"
+  // }
 });
 
 export default LoginScreen;

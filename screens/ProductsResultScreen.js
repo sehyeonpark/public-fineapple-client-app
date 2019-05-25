@@ -50,7 +50,7 @@ class ProductsResultScreen extends Component {
     console.log("params :::::::::::::", params);
     // console.log("state :::::::::", this.state.userDB_id);
     fetch(
-      `http://13.125.34.37:3001/products/list?countryCode=${
+      `https://ec2.fine-apple.me/products/list?countryCode=${
         params.country
       }&storeCode=${params.store}&category=${params.category}&userID=${Number(
         params.userDB_id
@@ -113,7 +113,7 @@ class ProductsResultScreen extends Component {
                                     text: "Yes",
                                     onPress: () =>
                                       fetch(
-                                        "http://13.125.34.37:3001/heartedItems/add",
+                                        "https://ec2.fine-apple.me/heartedItems/add",
                                         {
                                           method: "POST",
                                           headers: {
@@ -155,7 +155,7 @@ class ProductsResultScreen extends Component {
                                       //   storeID: item.storeID
                                       // };
                                       fetch(
-                                        "http://13.125.34.37:3001/heartedItems/delete",
+                                        "https://ec2.fine-apple.me/heartedItems/delete",
                                         {
                                           method: "DELETE",
                                           headers: {

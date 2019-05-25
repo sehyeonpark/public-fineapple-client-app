@@ -24,7 +24,7 @@ class StoreScreen extends Component {
     // console.log(params);
     console.log("Fetch!!!!!!");
     fetch(
-      `http://13.125.34.37:3001/stores/info?countryCode=${params.country.toLowerCase()}&storeCode=${
+      `https://ec2.fine-apple.me/stores/info?countryCode=${params.country.toLowerCase()}&storeCode=${
         params.store
       }`
     )
@@ -47,101 +47,108 @@ class StoreScreen extends Component {
       !this.state.isMapview
     ) {
       return (
-        <View style={styles.container}>
-          <Text style={styles.storeName}>
-            {this.state.storeDetail.storeName}
-          </Text>
-          <Image
-            source={{ uri: this.state.storeDetail.image_url }}
-            style={styles.picture}
-            resizeMode={"stretch"}
-          />
-          <View style={styles.storeInfo}>
-            <View style={styles.infoText1}>
-              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
-                주소 :
-              </Text>
-              <Text>{this.state.storeDetail.address.address2}</Text>
-              <Text>{this.state.storeDetail.address.address3}</Text>
-              <Text>{this.state.storeDetail.contact}</Text>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() =>
-                  this.setState({
-                    isMapview: true
-                  })
-                }
-              >
-                <Text style={{ fontWeight: "bold", color: "#228be6" }}>
-                  오시는 길과 지도>
+        <ScrollView style={{ marginTop: 50 }}>
+          <View style={styles.container}>
+            <Text style={styles.storeName}>
+              {this.state.storeDetail.storeName}
+            </Text>
+            <Image
+              source={{ uri: this.state.storeDetail.image_url }}
+              style={styles.picture}
+              resizeMode={"stretch"}
+            />
+            <View style={styles.storeInfo}>
+              <View style={styles.infoText1}>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                  주소 :
                 </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.infoText2}>
-              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
-                매장 운영 시간 :
-              </Text>
-              <Text>{this.state.storeDetail.storeHours.storeDays}</Text>
-              <Text>{this.state.storeDetail.storeHours.storeTimings}</Text>
+                <Text>{this.state.storeDetail.address.address2}</Text>
+                <Text>{this.state.storeDetail.address.address3}</Text>
+                <Text>{this.state.storeDetail.contact}</Text>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() =>
+                    this.setState({
+                      isMapview: true
+                    })
+                  }
+                >
+                  <Text style={{ fontWeight: "bold", color: "#228be6" }}>
+                    오시는 길과 지도>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.infoText2}>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                  매장 운영 시간 :
+                </Text>
+                <Text>{this.state.storeDetail.storeHours.storeDays}</Text>
+                <Text>{this.state.storeDetail.storeHours.storeTimings}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       );
     } else if (this.state.isMapview) {
       return (
-        <View style={styles.container}>
-          <Text style={styles.storeName}>
-            {this.state.storeDetail.storeName}
-          </Text>
-          <View style={{ width: "95%", height: 300 }}>
-            <MapView
-              style={{ width: "100%", flex: 1 }}
-              initialRegion={{
-                latitude: this.state.storeDetail.storeLocation.storelatitude,
-                longitude: this.state.storeDetail.storeLocation.storelongitude,
-                latitudeDelta: 0.001,
-                longitudeDelta: 0.0005
-              }}
-            >
-              <MapView.Marker
-                coordinate={{
+        <ScrollView style={{ marginTop: 50 }}>
+          <View style={styles.container}>
+            <Text style={styles.storeName}>
+              {this.state.storeDetail.storeName}
+            </Text>
+            <View style={{ width: "95%", height: 300 }}>
+              <MapView
+                style={{ width: "100%", flex: 1 }}
+                initialRegion={{
                   latitude: this.state.storeDetail.storeLocation.storelatitude,
-                  longitude: this.state.storeDetail.storeLocation.storelongitude
+                  longitude: this.state.storeDetail.storeLocation
+                    .storelongitude,
+                  latitudeDelta: 0.001,
+                  longitudeDelta: 0.0005
                 }}
-                title={this.state.storeDetail.storeName}
-                description={this.state.storeDetail.contact}
-              />
-            </MapView>
-          </View>
-          <View style={styles.storeInfo}>
-            <View style={styles.infoText1}>
-              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
-                주소 :
-              </Text>
-              <Text>{this.state.storeDetail.address.address2}</Text>
-              <Text>{this.state.storeDetail.address.address3}</Text>
-              <Text>{this.state.storeDetail.contact}</Text>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() =>
-                  this.setState({
-                    isMapview: false
-                  })
-                }
               >
-                <Text style={{ fontWeight: "bold", color: "#228be6" }}>
-                  매장 운영 시간 보기>
-                </Text>
-              </TouchableOpacity>
+                <MapView.Marker
+                  coordinate={{
+                    latitude: this.state.storeDetail.storeLocation
+                      .storelatitude,
+                    longitude: this.state.storeDetail.storeLocation
+                      .storelongitude
+                  }}
+                  title={this.state.storeDetail.storeName}
+                  description={this.state.storeDetail.contact}
+                />
+              </MapView>
             </View>
-            <View style={styles.infoText2}>
-              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
-                찾아오시는 길 :
-              </Text>
-              <Text>{this.state.storeDetail.way_to_come}</Text>
+            <View style={styles.storeInfo}>
+              <View style={styles.infoText1}>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                  주소 :
+                </Text>
+                <Text>{this.state.storeDetail.address.address2}</Text>
+                <Text>{this.state.storeDetail.address.address3}</Text>
+                <Text>{this.state.storeDetail.contact}</Text>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() =>
+                    this.setState({
+                      isMapview: false
+                    })
+                  }
+                >
+                  <Text style={{ fontWeight: "bold", color: "#228be6" }}>
+                    매장 운영 시간 보기>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.infoText2}>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+                  찾아오시는 길 :
+                </Text>
+                <Text>{this.state.storeDetail.way_to_come}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       );
     } else {
       return (

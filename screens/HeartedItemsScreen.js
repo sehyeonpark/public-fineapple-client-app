@@ -48,7 +48,7 @@ class HeartedItemsScreen extends Component {
     this._retrieveData().then(() => {
       console.log(this.state);
       fetch(
-        `http://13.125.34.37:3001/heartedItems/list?userID=${
+        `https://ec2.fine-apple.me/heartedItems/list?userID=${
           this.state.userDB_id
         }`
       )
@@ -103,7 +103,7 @@ class HeartedItemsScreen extends Component {
                                 storeID: item.storeID
                               };
                               fetch(
-                                "http://13.125.34.37:3001/heartedItems/delete",
+                                "https://ec2.fine-apple.me/heartedItems/delete",
                                 {
                                   method: "DELETE",
                                   headers: {
@@ -215,7 +215,9 @@ const styles = StyleSheet.create({
   },
   text: {
     marginBottom: 13,
-    fontSize: 18
+    fontSize: 18,
+    marginLeft: 10,
+    marginRight: 10
   },
   pickupTrue: {
     alignItems: "center",

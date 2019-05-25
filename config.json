@@ -1,4 +1,5 @@
 {
-  "GOOGLE_CLIENT_KEY": "191542733165-0paq8851ptkq0hnccgjgh8cnk4tmh0qu.apps.googleusercontent.com",
+  "GOOGLE_IOS_CLIENT_KEY": "191542733165-0paq8851ptkq0hnccgjgh8cnk4tmh0qu.apps.googleusercontent.com",
+  "GOOGLE_ANDROID_CLIENT_KEY": "191542733165-aatraf1voej3u5u9f8ke05756r9h1b3q.apps.googleusercontent.com",
   "FACEBOOK_CLIENT_KEY": "969319146756204"
 }
