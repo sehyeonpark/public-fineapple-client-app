@@ -378,8 +378,8 @@ const styles = StyleSheet.create({
   },
 
   loginText: {
-    fontSize: 20.5,
-    // fontSize: 15,
+    // fontSize: 20.5,
+    fontSize: 15,
     fontWeight: "bold",
     color: "white",
     // backgroundColor: "black",
@@ -387,8 +387,8 @@ const styles = StyleSheet.create({
     paddingRight: 10
   },
   notLoginText: {
-    fontSize: 20.5,
-    // fontSize: 17,
+    // fontSize: 20.5,
+    fontSize: 17,
     fontWeight: "bold",
     color: "white"
     // backgroundColor: "black",

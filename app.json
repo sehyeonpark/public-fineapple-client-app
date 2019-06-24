@@ -22,8 +22,8 @@
       "bundleIdentifier": "me.fine-apple"
     },
     "android": {
-      "package": "me.fineapple",
-      "versionCode": 2
+      "package": "host.exp.exponent",
+      "versionCode": 3
     },
     "facebookScheme": "fb969319146756204"
   }
