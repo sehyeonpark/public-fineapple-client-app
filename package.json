@@ -7,7 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "expo": "^32.0.6",
     "firebase": "^5.7.3",
     "prop-types": "^15.7.2",
